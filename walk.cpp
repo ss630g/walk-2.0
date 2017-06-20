@@ -483,6 +483,8 @@ void checkKeys(XEvent *e)
 	//keyboard input?
 	static int shift=0;
 	int key = XLookupKeysym(&e->xkey, 0);
+	key = key & 0x0000ffff;
+
 	gl.keys[key]=1;
 	if (e->type == KeyRelease) {
 		gl.keys[key]=0;
