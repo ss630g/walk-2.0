@@ -151,13 +151,16 @@ public:
 
 class Level {
 public:
-	unsigned char arr[16][80];
+	unsigned char arr[16][180];
 	int nrows, ncols;
 	int tilesize[2];
 	Flt ftsz[2];
 	Flt tile_base;
+	int hi[180];
 	Level() {
 		//Log("Level constructor\n");
+		for (int i=0; i<180; i++)
+		    hi[i] = -1;
 		tilesize[0] = 32;
 		tilesize[1] = 32;
 		ftsz[0] = (Flt)tilesize[0];
@@ -641,13 +644,24 @@ void physics(void)
 	int col = (int)(gl.camera[0] / dd) + (500.0 / lev.tilesize[0] + 1);
 	col = col % lev.ncols;
 	int hgt = 0;
-	for (int i = 0; i < lev.nrows; i++) {
-	    if(lev.arr[i][col] != ' '){
-		hgt = i;
-	    break;
-	    }
+//----------------------------------------------------------------------------------------------//
+//RIGHT HERE	
+	if ( lev.hi[col] != -1) {
+	    hgt = lev.hi[col];
 	}
-
+	else {
+	    
+	    for (int i = 0; i < lev.nrows; i++) {
+	    	
+		if (lev.arr[i][col] != ' '){
+		    hgt = i;
+		    break;
+		}
+	    }
+	    printf("print =  %i\n", col);
+	    lev.hi[col]= hgt;
+	}
+//--------------------------------------------------------------------------------------------//
 	//height of ball is (nrows-1-i)*tile_height + starting point
 	Flt h= lev.tilesize[1]*(lev.nrows - hgt) + lev.tile_base;
 	if (gl.ball_pos[1] <= h) {
@@ -768,7 +782,7 @@ void render(void)
 	//glEnd();
 	//
 	//
-	float h = 200.0;
+	float h = 50.0;
 	float w = h * 0.5;
 	glPushMatrix();
 	glColor3f(1.0, 1.0, 1.0);
@@ -776,7 +790,7 @@ void render(void)
 	//
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.0f);
-	glColor4ub(255,255,255,255);
+	glColor4ub(245,199,130,255);
 	int ix = gl.walkFrame % 8;
 	int iy = 0;
 	if (gl.walkFrame >= 8)
